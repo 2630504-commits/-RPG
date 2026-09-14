@@ -2,12 +2,12 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>파칭코 RPG - 수류탄병 평타 범위 수정판</title>
+    <title>파칭코 RPG - 히든 합성 추가판</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         html, body { width: 100%; height: 100%; background: #121212; color: #fff; font-family: 'Malgun Gothic', sans-serif; overflow: hidden; }
         
-        /* 메인 시작화면 (Start Screen Overlay) */
+        /* 메인 시작화면 */
         #start-screen {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: linear-gradient(rgba(10, 10, 18, 0.75), rgba(10, 10, 18, 0.85)), url('watermarked_img_10733501460003460638.png') no-repeat center center / cover;
@@ -24,10 +24,7 @@
             animation: pulse-title 2s infinite alternate;
         }
 
-        .start-subtitle {
-            font-size: 18px; color: #ffeb3b; margin-bottom: 35px;
-            letter-spacing: 4px; font-weight: bold; text-shadow: 0 0 10px rgba(255, 235, 59, 0.8);
-        }
+        .start-subtitle { font-size: 18px; color: #ffeb3b; margin-bottom: 35px; letter-spacing: 4px; font-weight: bold; text-shadow: 0 0 10px rgba(255, 235, 59, 0.8); }
 
         .start-btn {
             padding: 16px 48px; font-size: 22px; font-weight: bold; color: #000;
@@ -37,10 +34,7 @@
             transition: transform 0.2s, box-shadow 0.2s;
         }
 
-        .start-btn:hover {
-            transform: scale(1.08);
-            box-shadow: 0 0 40px rgba(255, 0, 127, 1);
-        }
+        .start-btn:hover { transform: scale(1.08); box-shadow: 0 0 40px rgba(255, 0, 127, 1); }
 
         .start-info {
             margin-top: 40px; background: rgba(0, 0, 0, 0.6); padding: 15px 25px;
@@ -113,6 +107,37 @@
             transform: translate(-50%, -50%); box-shadow: 0 0 12px rgba(0, 255, 204, 0.3);
         }
 
+        /* 신규 이펙트 스타일 */
+        .ice-spear {
+            position: absolute; width: 30px; height: 8px; background: linear-gradient(90deg, #00ffff, #87ceeb);
+            box-shadow: 0 0 12px #00ffff; border-radius: 4px; z-index: 29; pointer-events: none;
+            transition: left 0.18s linear, top 0.18s linear;
+        }
+
+        .ice-burst {
+            position: absolute; width: 140px; height: 140px; border-radius: 50%;
+            background: radial-gradient(circle, rgba(0,255,255,0.8), rgba(0,191,255,0.4), transparent);
+            box-shadow: 0 0 25px #00ffff; z-index: 28; pointer-events: none;
+            transform: translate(-50%, -50%); animation: grenade-boom 0.4s ease-out forwards;
+        }
+
+        .judgement-hammer {
+            position: absolute; width: 60px; height: 120px; background: linear-gradient(180deg, #ffe600, #ff9900);
+            box-shadow: 0 0 30px #ffe600; border-radius: 8px; z-index: 35; pointer-events: none;
+            transform: translate(-50%, -100%); animation: hammer-drop 0.35s ease-in forwards;
+        }
+
+        @keyframes hammer-drop {
+            0% { opacity: 0; transform: translate(-50%, -250%) scale(1.5); }
+            100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        }
+
+        .magic-laser-broad {
+            position: absolute; height: 40px; background: linear-gradient(90deg, #ff00ff, #00ffff, #ffffff);
+            box-shadow: 0 0 25px #ff00ff, 0 0 40px #00ffff; z-index: 30; pointer-events: none;
+            transform-origin: 0% 50%; transition: opacity 0.3s ease-out;
+        }
+
         .taunt-cone {
             position: absolute; width: 450px; height: 450px;
             background: radial-gradient(circle at 0% 50%, rgba(255, 68, 68, 0.5) 0%, rgba(255, 68, 68, 0) 70%);
@@ -169,6 +194,17 @@
             transition: left 0.4s linear, top 0.4s linear;
         }
 
+        .heal-effect-aoe {
+            position: absolute; border-radius: 50%; background: radial-gradient(circle, rgba(0, 255, 128, 0.8), rgba(0, 255, 204, 0));
+            box-shadow: 0 0 30px #00ffcc; z-index: 28; pointer-events: none; transform: translate(-50%, -50%);
+            animation: heal-pulse 0.6s ease-out forwards;
+        }
+
+        @keyframes heal-pulse {
+            0% { width: 0px; height: 0px; opacity: 1; }
+            100% { width: 500px; height: 500px; opacity: 0; }
+        }
+
         @keyframes cone-fade {
             0% { opacity: 1; transform: scale(0.8); }
             100% { opacity: 0; transform: scale(1.1); }
@@ -204,6 +240,7 @@
         .tier-R { background: #2d3748; border: 2px solid #718096; color: #fff; }
         .tier-SR { background: #1a365d; border: 2px solid #3182ce; color: #fff; }
         .tier-SSR { background: #744210; border: 2px solid #ecc94b; color: #fff; box-shadow: 0 0 8px rgba(236, 201, 75, 0.6); }
+        .tier-LR { background: linear-gradient(135deg, #4a00e0, #8e2de2); border: 2px solid #00ffff; color: #fff; box-shadow: 0 0 12px #00ffff; }
         
         .tier-SUMMON { border-radius: 50% !important; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .wolf-unit { width: 55px !important; height: 55px !important; background: #4a5568 !important; border: 2px solid #a0aec0 !important; color: #fff; }
@@ -233,6 +270,7 @@
         .skill-text { font-size: 8px; color: #ffeb3b; position: absolute; top: -14px; background: rgba(0,0,0,0.7); padding: 1px 4px; border-radius: 3px; }
 
         .projectile { position: absolute; width: 12px; height: 12px; border-radius: 50%; background: #00ffcc; box-shadow: 0 0 8px #00ffcc; z-index: 25; pointer-events: none; transition: left 0.18s linear, top 0.18s linear; }
+        .projectile-heal { background: #00ff66 !important; box-shadow: 0 0 10px #00ff66 !important; }
         .projectile-arrow { width: 16px; height: 4px; border-radius: 2px; background: #ffeb3b; box-shadow: 0 0 8px #ffeb3b; }
         .projectile-sniper { width: 24px; height: 3px; background: #00ffcc; box-shadow: 0 0 10px #00ffcc; }
         .projectile-grenade { width: 16px; height: 16px; border-radius: 50%; background: #ff3300; border: 2px solid #ffcc00; box-shadow: 0 0 12px #ff3300; }
@@ -265,6 +303,7 @@
         .enemy-type { font-size: 9px; color: #ffcc00; }
 
         .damage-pop { position: absolute; font-size: 14px; font-weight: bold; color: #ff3333; text-shadow: 1px 1px 2px #000; pointer-events: none; z-index: 100; animation: damage-float 0.6s ease-out forwards; }
+        .heal-pop { color: #00ff66 !important; text-shadow: 0 0 5px #00ff66 !important; }
         .skill-pop { color: #ffeb3b; font-size: 16px; font-weight: 900; text-shadow: 0 0 5px #ff9800; }
 
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); display: none; align-items: center; justify-content: center; z-index: 200; }
@@ -287,12 +326,13 @@
 
 <div id="start-screen">
     <div class="start-title">PACHINKO RPG</div>
-    <div class="start-subtitle">🎰 SLOT & DEFENSE FANTASY 🗡️</div>
+    <div class="start-subtitle">🎰 히든 합성 업데이트 ⚔️</div>
     <button class="start-btn" onclick="startGame()">PRESS START</button>
     <div class="start-info">
-        🎰 <b>슬롯 스핀</b>을 눌러 등급별 영웅을 가챠 소환하세요!<br>
-        🏹 <b>궁수/저격수/특수부대/수류탄병</b> 등 강력한 원딜을 활용하세요.<br>
-        ⚔️ 동일 등급 영웅을 <b>합체</b>하여 강력한 영웅으로 진화시키세요!
+        🎰 <b>히든 합성 레시피 안내</b><br>
+        ❄️ <b>LR 마검사</b> = 용맹기사 + 대마법사<br>
+        🔨 <b>SSR 구원자</b> = 성기사 + 성직사 + 전사<br>
+        💥 <b>LR 마탄수</b> = 저격수 + 대마법사
     </div>
 </div>
 
@@ -320,7 +360,11 @@
             <button id="play-btn" onclick="startBattle()">▶ PLAY (전투)</button>
         </div>
 
-        <div class="instruction">💡 아군 정보를 보려면 유닛을 **더블 클릭**하세요.<br>🎯 정보 표시 시 사거리가 원형으로 나타납니다.</div>
+        <div class="btn-group">
+            <button id="hidden-combine-btn" style="background:#8e2de2; color:#fff; border:none; height:32px; border-radius:6px; font-weight:bold; cursor:pointer;" onclick="checkHiddenSynthesis()">✨ 히든 합성 확인</button>
+        </div>
+
+        <div class="instruction">💡 동일 재료 보유 시 히든 합성을 진행할 수 있습니다.</div>
         <div id="bench"></div>
         <div id="msg-log">게임 시작! SPIN을 눌러 영웅을 뽑으세요.</div>
     </div>
@@ -337,7 +381,7 @@
         <button class="modal-close" onclick="closeModal('info-modal')">✕</button>
         <div id="modal-name" class="modal-title">개체 이름</div>
         <div class="stat-grid">
-            <div class="stat-box"><div class="stat-label">⚔️ 공격력</div><div class="stat-value" id="stat-atk">0</div></div>
+            <div class="stat-box"><div class="stat-label">⚔️ 공격력/힐량</div><div class="stat-value" id="stat-atk">0</div></div>
             <div class="stat-box"><div class="stat-label">🛡️ 방어력</div><div class="stat-value" id="stat-def">0</div></div>
             <div class="stat-box"><div class="stat-label">❤️ 체력</div><div class="stat-value" id="stat-hp">0 / 0</div></div>
             <div class="stat-box"><div class="stat-label">✨ 스킬</div><div class="stat-value" id="stat-skill">없음</div></div>
@@ -358,9 +402,7 @@
     function startGame() {
         const startScreen = document.getElementById('start-screen');
         startScreen.style.opacity = '0';
-        setTimeout(() => {
-            startScreen.style.display = 'none';
-        }, 500);
+        setTimeout(() => { startScreen.style.display = 'none'; }, 500);
     }
 
     let gold = 100;
@@ -373,6 +415,7 @@
 
     let bench = [];
     let deployedUnits = [];
+    let deadUnits = [];
     let enemies = [];
     let isSpinning = false;
     let isFighting = false;
@@ -382,20 +425,26 @@
     let battleTimeLeft = 120; 
 
     const SKILL_MAX_CD = 8; 
+    const DOCTOR_SKILL_CD = 20;
+    const PRIEST_SKILL_CD = 33;
+    const DRONE_SKILL_CD = 50;
+
     const STEALTH_CD_TICKS = 20;
     const SHIELD_FIXED_VALUE = 100;
 
     const unitData = {
-        R: ["전사", "마법사", "도적", "궁수"],
-        SR: ["드루이드", "성기사", "돌격병", "저격수", "수류탄병"],
-        SSR: ["어쌔신", "대마법사", "용맹기사", "레이저병", "특수부대"]
+        R: ["전사", "마법사", "도적", "궁수", "의사"],
+        SR: ["드루이드", "성기사", "돌격병", "저격수", "수류탄병", "성직사"],
+        SSR: ["어쌔신", "대마법사", "용맹기사", "레이저병", "특수부대", "의료 조종 드론사", "구원자"],
+        LR: ["마검사", "마탄수"]
     };
 
     const classRoles = {
-        "마법사": "마력원딜", "드루이드": "마력원딜", "대마법사": "마력원딜",
+        "마법사": "마력원딜", "드루이드": "마력원딜", "대마법사": "마력원딜", "마탄수": "물리원딜",
         "궁수": "물리원딜", "저격수": "물리원딜", "수류탄병": "물리원딜", "레이저병": "물리원딜", "특수부대": "물리원딜",
-        "전사": "탱커", "성기사": "탱커", "용맹기사": "탱커",
-        "도적": "근딜", "어쌔신": "근딜", "돌격병": "근딜",
+        "전사": "탱커", "성기사": "탱커", "용맹기사": "탱커", "구원자": "근딜",
+        "도적": "근딜", "어쌔신": "근딜", "돌격병": "근딜", "마검사": "근딜",
+        "의사": "힐러", "성직사": "힐러", "의료 조종 드론사": "힐러",
         "늑대": "근딜", "곰": "탱커"
     };
 
@@ -413,7 +462,13 @@
         "저격수": "저격 헤드샷 (직선 관통)",
         "수류탄병": "클러스터 폭발탄 (넓은 광역 피해)",
         "레이저병": "열선 빔 (지속 데미지)",
-        "특수부대": "전술 사격 & 후퇴 연막탄"
+        "특수부대": "전술 사격 & 후퇴 연막탄",
+        "의사": "응급치료 (쿨타임 6초)",
+        "성직사": "구원 (쿨타임 10초)",
+        "의료 조종 드론사": "원격 드론 회복 (쿨타임 15초)",
+        "마검사": "아이스 스피어 (광역 얼음 파동)",
+        "구원자": "심판 (위성 망치 강하)",
+        "마탄수": "특제 마력탄 (광범위 대형 레이저)"
     };
 
     const MAGIC_RANGED_RANGE = 500;
@@ -428,30 +483,38 @@
         "저격수": 800,
         "수류탄병": 550,
         "레이저병": 700,
-        "특수부대": 600
+        "특수부대": 600,
+        "마탄수": 850,
+        "의사": 60,
+        "성직사": 500,
+        "의료 조종 드론사": 550
     };
 
     function getUnitStats(name, tier, star) {
         let role = classRoles[name] || "근딜";
-        let tierMult = (tier === 'SSR' ? 3 : (tier === 'SR' ? 2 : 1)) * star;
-        let baseDmgVal = (role === "마력원딜") ? mp : atk;
+        let tierMult = (tier === 'LR' ? 4.5 : (tier === 'SSR' ? 3 : (tier === 'SR' ? 2 : 1))) * star;
         
+        let baseDmgVal = atk;
+        if (role === "마력원딜") baseDmgVal = mp;
+        if (name === "마검사") baseDmgVal = atk + mp; // 마검사: 공격력과 마력 모두 영향을 받음
+
         let finalDmg = baseDmgVal * (role === "탱커" ? 0.6 : (role === "근딜" ? 1.8 : 1.2)) * tierMult;
-        let finalHp = hp * (role === "탱커" ? 2.2 : (role === "근딜" ? 0.6 : 0.8)) * tierMult;
-        let finalDef = role === "탱커" ? star * 8 : 0;
-        let moveSpeed = role === "근딜" ? 24 : (role === "탱커" ? 10 : 12);
+        let finalHp = hp * (role === "탱커" ? 2.2 : (role === "근딜" ? 0.8 : (role === "힐러" ? 0.5 : 0.8))) * tierMult;
+        
+        if (role === "힐러") {
+            if (tier === "R") finalDmg = 30 * star;
+            else if (tier === "SR") finalDmg = 45 * star;
+            else if (tier === "SSR") finalDmg = 60 * star;
+        }
+
+        let finalDef = role === "탱커" ? star * 8 : (tier === 'LR' ? star * 5 : 0);
+        let moveSpeed = role === "근딜" ? 24 : (role === "탱커" ? 10 : (name === "의사" ? 18 : 12));
         
         let unitRange = classRanges[name] || (role === "마력원딜" ? MAGIC_RANGED_RANGE : MELEE_ATTACK_RANGE);
         if (name === "전사") unitRange = WARRIOR_ATTACK_RANGE;
 
         return {
-            role,
-            damage: finalDmg,
-            maxHp: finalHp,
-            def: finalDef,
-            speed: moveSpeed,
-            range: unitRange,
-            skill: classSkills[name] || "패시브 강화"
+            role, damage: finalDmg, maxHp: finalHp, def: finalDef, speed: moveSpeed, range: unitRange, skill: classSkills[name] || "패시브 강화"
         };
     }
 
@@ -505,7 +568,7 @@
         removeRangeCircle();
 
         document.getElementById('modal-name').innerText = `[${obj.role || obj.type}] ${obj.name}`;
-        document.getElementById('stat-atk').innerText = Math.round(obj.damage);
+        document.getElementById('stat-atk').innerText = obj.role === "힐러" ? `기본 힐량: ${Math.round(obj.damage)}` : Math.round(obj.damage);
         document.getElementById('stat-def').innerText = Math.round(obj.def || 0);
         document.getElementById('stat-hp').innerText = `${Math.round(obj.currentHp)} / ${Math.round(obj.maxHp)} ${obj.shield > 0 ? '(🛡️' + Math.round(obj.shield) + ')' : ''}`;
         document.getElementById('stat-skill').innerText = obj.skill || "없음";
@@ -527,10 +590,10 @@
         }
     }
 
-    function showDamageText(x, y, text, isSkill = false) {
+    function showDamageText(x, y, text, isSkill = false, isHeal = false) {
         const field = document.getElementById('battle-field');
         let pop = document.createElement('div');
-        pop.className = `damage-pop ${isSkill ? 'skill-pop' : ''}`;
+        pop.className = `damage-pop ${isSkill ? 'skill-pop' : ''} ${isHeal ? 'heal-pop' : ''}`;
         pop.innerText = text;
         pop.style.left = (x + 15) + 'px';
         pop.style.top = (y - 15) + 'px';
@@ -558,11 +621,6 @@
         shieldFill.style.width = shieldPct + "%";
     }
 
-    function addShield(target, amount = SHIELD_FIXED_VALUE) {
-        target.shield = SHIELD_FIXED_VALUE;
-        updateHpAndShieldBar(target);
-    }
-
     function launchProjectile(attacker, target, onHitCallback, isEnemy = false, type = 'default') {
         const field = document.getElementById('battle-field');
         let proj = document.createElement('div');
@@ -571,6 +629,7 @@
         if (type === 'arrow') projClass += ' projectile-arrow';
         if (type === 'sniper') projClass += ' projectile-sniper';
         if (type === 'grenade') projClass += ' projectile-grenade';
+        if (type === 'heal') projClass += ' projectile-heal';
 
         proj.className = projClass;
 
@@ -591,548 +650,159 @@
         }, 180);
     }
 
-    /* 수류탄병 평타 (기본 범위 공격) 처리 함수 */
-    function applyGrenadeBasicAreaDamage(grenadier, target) {
+    /* --- 신규 스킬 구현 --- */
+
+    // 1. LR 마검사 스킬: 아이스 스피어
+    function triggerIceSpear(spellblade, target) {
+        showDamageText(spellblade.currentX, spellblade.currentY, "❄️ 아이스 스피어!", true);
         const field = document.getElementById('battle-field');
         
-        // 소형 폭발 효과 연출
-        let exp = document.createElement('div');
-        exp.className = 'grenade-explosion';
-        exp.style.left = (target.currentX + 40) + 'px';
-        exp.style.top = (target.currentY + 40) + 'px';
-        exp.style.width = '100px';
-        exp.style.height = '100px';
-        field.appendChild(exp);
+        let spear = document.createElement('div');
+        spear.className = 'ice-spear';
+        spear.style.left = (spellblade.currentX + 40) + 'px';
+        spear.style.top = (spellblade.currentY + 40) + 'px';
+        field.appendChild(spear);
 
-        // 기본 공격 범위 피해 (radius: 110px)
-        enemies.forEach(e => {
-            if (e.currentHp > 0) {
-                let dist = Math.hypot(e.currentX - target.currentX, e.currentY - target.currentY);
-                if (dist <= 110) {
-                    applyDamageToTarget(e, grenadier.damage, grenadier);
-                    triggerHit(e.el);
-                    showDamageText(e.currentX, e.currentY, `-${Math.round(grenadier.damage)}`);
-                }
-            }
-        });
+        setTimeout(() => {
+            spear.style.left = (target.currentX + 40) + 'px';
+            spear.style.top = (target.currentY + 40) + 'px';
+        }, 20);
 
-        setTimeout(() => exp.remove(), 400);
-    }
-
-    function triggerArcherRapidFire(archer, target) {
-        showDamageText(archer.currentX, archer.currentY, "🏹 3연발 사격!", true);
-        for (let i = 0; i < 3; i++) {
-            setTimeout(() => {
-                if (target && target.currentHp > 0) {
-                    launchProjectile(archer, target, () => {
-                        let dmg = archer.damage * 0.9;
-                        applyDamageToTarget(target, dmg, archer);
-                        triggerHit(target.el);
-                        showDamageText(target.currentX, target.currentY, `🏹 -${Math.round(dmg)}`);
-                    }, false, 'arrow');
-                }
-            }, i * 120);
-        }
-    }
-
-    function triggerSniperHeadshot(sniper, target) {
-        showDamageText(sniper.currentX, sniper.currentY, "🎯 저격 관통샷!", true);
-        launchProjectile(sniper, target, () => {
-            enemies.forEach(e => {
-                if (e.currentHp > 0 && Math.abs(e.currentY - target.currentY) <= 40) {
-                    let dmg = sniper.damage * 3.5;
-                    applyDamageToTarget(e, dmg, sniper);
-                    triggerHit(e.el);
-                    showDamageText(e.currentX, e.currentY, `🎯 -${Math.round(dmg)}`, true);
-                }
-            });
-        }, false, 'sniper');
-    }
-
-    function triggerGrenadeExplosion(grenadier, target) {
-        showDamageText(grenadier.currentX, grenadier.currentY, "💣 대형 폭발탄 투척!", true);
-        
-        launchProjectile(grenadier, target, () => {
-            const field = document.getElementById('battle-field');
-            
-            let exp = document.createElement('div');
-            exp.className = 'grenade-explosion';
-            exp.style.left = (target.currentX + 40) + 'px';
-            exp.style.top = (target.currentY + 40) + 'px';
-            field.appendChild(exp);
+        setTimeout(() => {
+            spear.remove();
+            let burst = document.createElement('div');
+            burst.className = 'ice-burst';
+            burst.style.left = (target.currentX + 40) + 'px';
+            burst.style.top = (target.currentY + 40) + 'px';
+            field.appendChild(burst);
 
             enemies.forEach(e => {
                 if (e.currentHp > 0) {
                     let dist = Math.hypot(e.currentX - target.currentX, e.currentY - target.currentY);
-                    if (dist <= 180) {
-                        let dmg = grenadier.damage * 3.2;
-                        applyDamageToTarget(e, dmg, grenadier);
+                    if (dist <= 140) {
+                        let dmg = spellblade.damage * 3.5;
+                        applyDamageToTarget(e, dmg, spellblade);
                         triggerHit(e.el);
-                        showDamageText(e.currentX, e.currentY, `💥 -${Math.round(dmg)}`, true);
+                        showDamageText(e.currentX, e.currentY, `❄️ -${Math.round(dmg)}`, true);
                     }
                 }
             });
-
-            setTimeout(() => exp.remove(), 500);
-        }, false, 'grenade');
+            setTimeout(() => burst.remove(), 400);
+        }, 180);
     }
 
-    function triggerLaserBeam(laserUnit, target) {
-        showDamageText(laserUnit.currentX, laserUnit.currentY, "⚡ 고열 레이저!", true);
-        const field = document.getElementById('battle-field');
-        let laser = document.createElement('div');
-        laser.className = 'laser-beam';
-
-        let startX = laserUnit.currentX + 40;
-        let startY = laserUnit.currentY + 40;
-        let dx = target.currentX - laserUnit.currentX;
-        let dy = target.currentY - laserUnit.currentY;
-        let angle = Math.atan2(dy, dx);
-        let dist = Math.hypot(dx, dy);
-
-        laser.style.left = startX + 'px';
-        laser.style.top = startY + 'px';
-        laser.style.width = dist + 'px';
-        laser.style.transform = `rotate(${angle}rad)`;
-        field.appendChild(laser);
-
-        let dmg = laserUnit.damage * 2.8;
-        applyDamageToTarget(target, dmg, laserUnit);
-        triggerHit(target.el);
-        showDamageText(target.currentX, target.currentY, `⚡ -${Math.round(dmg)}`, true);
-
-        setTimeout(() => laser.remove(), 250);
-    }
-
-    function triggerSpecOpsTactics(specOps, target) {
-        showDamageText(specOps.currentX, specOps.currentY, "🔫 전술 연사!", true);
-        for (let i = 0; i < 4; i++) {
-            setTimeout(() => {
-                if (target && target.currentHp > 0) {
-                    let dmg = specOps.damage * 0.8;
-                    applyDamageToTarget(target, dmg, specOps);
-                    triggerHit(target.el);
-                    showDamageText(target.currentX, target.currentY, `💥 -${Math.round(dmg)}`);
-                }
-            }, i * 80);
-        }
-
-        if (specOps.currentHp <= specOps.maxHp * 0.5 && !specOps.isStealth) {
-            triggerStealth(specOps);
-            specOps.currentX = Math.max(10, specOps.currentX - 100);
-            specOps.el.style.left = specOps.currentX + 'px';
-            showDamageText(specOps.currentX, specOps.currentY, "💨 연막 후퇴!", true);
-        }
-    }
-
-    function launchEnergyBall(attacker, target, onHitCallback) {
-        const field = document.getElementById('battle-field');
-        let eBall = document.createElement('div');
-        eBall.className = 'energy-ball';
-
-        let startX = attacker.currentX + 30;
-        let startY = attacker.currentY + 30;
-        eBall.style.left = startX + 'px';
-        eBall.style.top = startY + 'px';
-        field.appendChild(eBall);
-
-        setTimeout(() => {
-            eBall.style.left = (target.currentX + 30) + 'px';
-            eBall.style.top = (target.currentY + 30) + 'px';
-        }, 20);
-
-        setTimeout(() => {
-            eBall.remove();
-            if (target && target.currentHp > 0) onHitCallback();
-        }, 200);
-    }
-
-    function triggerDruidSummon(druid) {
-        showDamageText(druid.currentX, druid.currentY, "🐺🐻 야수 소환!", true);
+    // 2. SSR 구원자 스킬: 심판
+    function triggerJudgement(savior, target) {
+        showDamageText(savior.currentX, savior.currentY, "🔨 심판!", true);
         const field = document.getElementById('battle-field');
 
-        const createSummon = (type, offsetY) => {
-            let isBear = (type === "곰");
-            let div = document.createElement('div');
-            
-            div.className = `unit tier-SUMMON field-unit ${isBear ? 'bear-unit' : 'wolf-unit'}`;
-            
-            let posX = Math.min(field.clientWidth - 100, druid.currentX + 50);
-            let posY = Math.max(20, Math.min(field.clientHeight - 100, druid.currentY + offsetY));
-            div.style.left = posX + "px";
-            div.style.top = posY + "px";
-
-            let stats = {
-                role: isBear ? "탱커" : "근딜",
-                damage: (isBear ? mp * 0.8 : mp * 1.5) * druid.star,
-                maxHp: (isBear ? hp * 2.5 : hp * 0.8) * druid.star,
-                def: isBear ? druid.star * 10 : 0,
-                speed: isBear ? 12 : 22,
-                range: MELEE_ATTACK_RANGE,
-                skill: "소환수 패시브"
-            };
-
-            let emoji = isBear ? "🐻" : "🐺";
-            div.innerHTML = `
-                <div style="font-size: ${isBear ? '22px' : '15px'}; line-height: 1;">${emoji}</div>
-                <div style="font-size: 9px;">${type}</div>
-                <div class="unit-star">${'★'.repeat(druid.star)}</div>
-                <div class="hp-bar"><div class="hp-fill" style="width:100%"></div><div class="shield-fill" style="width:0%"></div></div>
-            `;
-
-            let summonObj = {
-                el: div,
-                hpFill: div.querySelector('.hp-fill'),
-                cdFill: null, cdText: null,
-                name: type, tier: 'SUMMON', star: druid.star, role: stats.role,
-                damage: stats.damage, def: stats.def, maxHp: stats.maxHp, currentHp: stats.maxHp, shield: 0,
-                range: stats.range, speed: stats.speed, skill: stats.skill,
-                isRanged: false, isSummon: true,
-                originX: posX, originY: posY, currentX: posX, currentY: posY,
-                target: null, totalDamageDealt: 0, skillCooldown: 0,
-                isStealth: false, stealthCd: 0
-            };
-
-            div.ondblclick = () => showInfoModal(summonObj);
-            field.appendChild(div);
-            deployedUnits.push(summonObj);
-        };
-
-        createSummon("늑대", -40);
-        createSummon("곰", 40);
-    }
-
-    function triggerDruidVineWhip(druid) {
-        const field = document.getElementById('battle-field');
-        let target = druid.target || getClosestTarget(druid, enemies);
-        let angle = 0;
-
-        if (target) {
-            angle = Math.atan2(target.currentY - druid.currentY, target.currentX - druid.currentX);
-        }
-
-        let vine = document.createElement('div');
-        vine.className = 'vine-line';
-
-        let startX = druid.currentX + 40;
-        let startY = druid.currentY + 40;
-
-        vine.style.left = startX + 'px';
-        vine.style.top = startY + 'px';
-        vine.style.transform = `rotate(${angle}rad)`;
-        vine.style.width = '0px';
-        field.appendChild(vine);
-
-        showDamageText(druid.currentX, druid.currentY, "🌿 덩굴 채찍!", true);
+        let hammer = document.createElement('div');
+        hammer.className = 'judgement-hammer';
+        hammer.style.left = (target.currentX + 40) + 'px';
+        hammer.style.top = (target.currentY + 40) + 'px';
+        field.appendChild(hammer);
 
         setTimeout(() => {
-            vine.style.width = '600px';
-        }, 20);
-
-        enemies.forEach(e => {
-            if (e.currentHp > 0) {
-                let dx = e.currentX - druid.currentX;
-                let dy = e.currentY - druid.currentY;
-                let enemyAngle = Math.atan2(dy, dx);
-                let angleDiff = Math.abs(enemyAngle - angle);
-
-                if (angleDiff < 0.25 && Math.hypot(dx, dy) <= 600) {
-                    let dmg = druid.damage * 2.8;
-                    applyDamageToTarget(e, dmg, druid);
-                    triggerHit(e.el);
-                    showDamageText(e.currentX, e.currentY, `🌿 -${Math.round(dmg)}`, true);
-                }
-            }
-        });
-
-        setTimeout(() => {
-            vine.style.opacity = '0';
-            setTimeout(() => vine.remove(), 300);
+            hammer.remove();
+            let dmg = savior.damage * 4.2;
+            applyDamageToTarget(target, dmg, savior);
+            triggerHit(target.el);
+            showDamageText(target.currentX, target.currentY, `💥 -${Math.round(dmg)}`, true);
         }, 350);
     }
 
-    function launchTornado(attacker, enemyTargets) {
+    // 3. LR 마탄수 스킬: 특제 마력탄 & 관통 평타
+    function triggerBroadMagicLaser(magicShooter, target) {
+        showDamageText(magicShooter.currentX, magicShooter.currentY, "🌌 특제 마력탄!", true);
         const field = document.getElementById('battle-field');
-        let tornado = document.createElement('div');
-        tornado.className = 'tornado-effect';
-        
-        let startX = attacker.currentX;
-        let startY = attacker.currentY;
-        tornado.style.left = startX + 'px';
-        tornado.style.top = startY + 'px';
-        field.appendChild(tornado);
+        let laser = document.createElement('div');
+        laser.className = 'magic-laser-broad';
 
-        let validTargets = enemyTargets.filter(e => e.currentHp > 0);
-        let targetX = field.clientWidth * 0.75 - 60;
-        let targetY = field.clientHeight * 0.5 - 60;
+        let startX = magicShooter.currentX + 40;
+        let startY = magicShooter.currentY + 40;
+        let dx = target.currentX - magicShooter.currentX;
+        let dy = target.currentY - magicShooter.currentY;
+        let angle = Math.atan2(dy, dx);
 
-        if (validTargets.length > 0) {
-            let avgX = validTargets.reduce((sum, e) => sum + e.currentX, 0) / validTargets.length;
-            let avgY = validTargets.reduce((sum, e) => sum + e.currentY, 0) / validTargets.length;
-            targetX = avgX - 20; 
-            targetY = avgY - 20;
-        }
+        laser.style.left = startX + 'px';
+        laser.style.top = startY + 'px';
+        laser.style.width = '800px';
+        laser.style.transform = `rotate(${angle}rad)`;
+        field.appendChild(laser);
 
-        setTimeout(() => {
-            tornado.style.left = targetX + 'px';
-            tornado.style.top = targetY + 'px';
-        }, 50);
-
-        let hitTicks = 0;
-        let tornadoInterval = setInterval(() => {
-            enemyTargets.forEach(e => {
-                if (e.currentHp > 0) {
-                    let dmg = Math.max(1, attacker.damage * 0.8 - (e.def || 0));
-                    applyDamageToTarget(e, dmg, attacker);
+        enemies.forEach(e => {
+            if (e.currentHp > 0) {
+                let edx = e.currentX - magicShooter.currentX;
+                let edy = e.currentY - magicShooter.currentY;
+                let eAngle = Math.atan2(edy, edx);
+                if (Math.abs(eAngle - angle) < 0.35) {
+                    let dmg = magicShooter.damage * 4.0;
+                    applyDamageToTarget(e, dmg, magicShooter);
                     triggerHit(e.el);
-                    showDamageText(e.currentX, e.currentY, `🌪️ -${Math.round(dmg)}`, true);
+                    showDamageText(e.currentX, e.currentY, `🌌 -${Math.round(dmg)}`, true);
                 }
-            });
-            hitTicks++;
-            if (hitTicks >= 5) {
-                clearInterval(tornadoInterval);
-                tornado.remove();
             }
-        }, 200);
+        });
+
+        setTimeout(() => laser.remove(), 350);
     }
 
-    function triggerWarriorTaunt(warrior) {
-        const field = document.getElementById('battle-field');
-        let cone = document.createElement('div');
-        cone.className = 'taunt-cone';
-        cone.style.left = (warrior.currentX + 40) + 'px';
-        cone.style.top = (warrior.currentY - 180) + 'px';
-        field.appendChild(cone);
-        setTimeout(() => cone.remove(), 500);
-
-        showDamageText(warrior.currentX, warrior.currentY, "🛡️ 부채꼴 대형 도발!", true);
-
+    function triggerMagicShooterPiercingBasic(magicShooter, target) {
         enemies.forEach(e => {
-            if (e.currentHp > 0) {
-                let dx = e.currentX - warrior.currentX;
-                let dy = e.currentY - warrior.currentY;
-                if (dx > 0) {
-                    let angle = Math.abs(Math.atan2(dy, dx) * (180 / Math.PI));
-                    if (angle <= 60 && dx <= 450) { 
-                        e.target = warrior;
-                        triggerHit(e.el);
-                        showDamageText(e.currentX, e.currentY, "😡 도발됨!", true);
-                    }
-                }
-            }
-        });
-    }
-
-    function triggerBossSpinSlash(boss) {
-        const field = document.getElementById('battle-field');
-        let slash = document.createElement('div');
-        slash.className = 'boss-spin-slash';
-        slash.style.left = (boss.currentX + 50) + 'px';
-        slash.style.top = (boss.currentY + 50) + 'px';
-        field.appendChild(slash);
-
-        showDamageText(boss.currentX, boss.currentY, "🌀 회오리 베기!", true);
-
-        deployedUnits.forEach(u => {
-            if (u.currentHp > 0) {
-                let dist = Math.hypot(u.currentX - boss.currentX, u.currentY - boss.currentY);
-                if (dist <= 150) {
-                    let dmg = boss.damage * 1.8;
-                    applyDamageToTarget(u, dmg);
-                    triggerHit(u.el);
-                    showDamageText(u.currentX, u.currentY, `💥 -${Math.round(dmg)}`, true);
-                }
-            }
-        });
-
-        setTimeout(() => slash.remove(), 600);
-    }
-
-    function triggerBossPiercingArrow(boss) {
-        const field = document.getElementById('battle-field');
-        let arrow = document.createElement('div');
-        arrow.className = 'piercing-arrow';
-        
-        let startX = boss.currentX;
-        let startY = boss.currentY + 40;
-        arrow.style.left = startX + 'px';
-        arrow.style.top = startY + 'px';
-        field.appendChild(arrow);
-
-        showDamageText(boss.currentX, boss.currentY, "🏹 관통 화살!", true);
-
-        setTimeout(() => {
-            arrow.style.left = '-100px';
-        }, 20);
-
-        deployedUnits.forEach(u => {
-            if (u.currentHp > 0) {
-                if (Math.abs(u.currentY - boss.currentY) <= 80 && u.currentX < boss.currentX) {
-                    setTimeout(() => {
-                        let dmg = boss.damage * 2.2;
-                        applyDamageToTarget(u, dmg);
-                        triggerHit(u.el);
-                        showDamageText(u.currentX, u.currentY, `🏹 -${Math.round(dmg)}`, true);
-                    }, 200);
-                }
-            }
-        });
-
-        setTimeout(() => arrow.remove(), 450);
-    }
-
-    function triggerPaladinShieldOnHit(paladin) {
-        showDamageText(paladin.currentX, paladin.currentY, "🛡️ 수호의 방패!(100)", true);
-        deployedUnits.forEach(u => {
-            if (u.currentHp > 0) {
-                addShield(u, SHIELD_FIXED_VALUE);
-                showDamageText(u.currentX, u.currentY, `🛡️ +100`, true);
-            }
-        });
-    }
-
-    function triggerValorKnightVictory(knight) {
-        showDamageText(knight.currentX, knight.currentY, "⚔️ 용맹의 선언!", true);
-        knight.valorBuffActive = true;
-
-        deployedUnits.forEach(u => {
-            if (u.currentHp > 0) {
-                addShield(u, SHIELD_FIXED_VALUE);
-                u.damage *= 1.35;
-                u.speed *= 1.35;
-                showDamageText(u.currentX, u.currentY, "🔥 BUFF & 🛡️100", true);
-            }
-        });
-    }
-
-    function triggerValorKnightSemicircle(knight) {
-        const field = document.getElementById('battle-field');
-        let target = knight.target || getClosestTarget(knight, enemies);
-        let angle = 0;
-
-        if (target) {
-            angle = Math.atan2(target.currentY - knight.currentY, target.currentX - knight.currentX);
-        }
-
-        let slash = document.createElement('div');
-        slash.className = 'semicircle-slash';
-        slash.style.left = (knight.currentX + 40) + 'px';
-        slash.style.top = (knight.currentY - 110) + 'px';
-        slash.style.setProperty('--angle', `${angle}rad`);
-        field.appendChild(slash);
-
-        showDamageText(knight.currentX, knight.currentY, "⚔️ 반원 참격!", true);
-
-        enemies.forEach(e => {
-            if (e.currentHp > 0) {
-                let dx = e.currentX - knight.currentX;
-                let dy = e.currentY - knight.currentY;
-                let dist = Math.hypot(dx, dy);
-
-                if (dist <= 300) {
-                    let enemyAngle = Math.atan2(dy, dx);
-                    let angleDiff = Math.abs(enemyAngle - angle);
-                    
-                    if (angleDiff <= Math.PI / 2 || angleDiff >= Math.PI * 1.5) {
-                        let dmg = knight.damage * 2.2;
-                        applyDamageToTarget(e, dmg, knight);
-                        triggerHit(e.el);
-                        showDamageText(e.currentX, e.currentY, `⚔️ -${Math.round(dmg)}`, true);
-                    }
-                }
-            }
-        });
-
-        setTimeout(() => slash.remove(), 400);
-    }
-
-    function triggerStealth(unit) {
-        if (unit.stealthCd > 0 || unit.isStealth) return;
-        unit.isStealth = true;
-        unit.stealthCd = STEALTH_CD_TICKS;
-        unit.el.classList.add('stealth-mode');
-        showDamageText(unit.currentX, unit.currentY, "👤 은신!", true);
-
-        enemies.forEach(e => {
-            if (e.target === unit) e.target = null;
-        });
-
-        setTimeout(() => {
-            unit.isStealth = false;
-            unit.el.classList.remove('stealth-mode');
-        }, 2500);
-    }
-
-    function triggerChargerDash(unit) {
-        const field = document.getElementById('battle-field');
-        showDamageText(unit.currentX, unit.currentY, "⚡ 돌격 (550)!", true);
-        
-        let endX = field.clientWidth - 100;
-        unit.currentX = endX;
-        unit.el.style.left = endX + 'px';
-        triggerAttack(unit.el, true);
-
-        enemies.forEach(e => {
-            if (e.currentHp > 0 && Math.abs(e.currentY - unit.currentY) <= 50) {
-                let dmg = 550;
-                applyDamageToTarget(e, dmg, unit);
+            if (e.currentHp > 0 && Math.abs(e.currentY - target.currentY) <= 50) {
+                let dmg = magicShooter.damage;
+                applyDamageToTarget(e, dmg, magicShooter);
                 triggerHit(e.el);
-                showDamageText(e.currentX, e.currentY, `💥 -${Math.round(dmg)}`, true);
+                showDamageText(e.currentX, e.currentY, `💥 -${Math.round(dmg)}`);
             }
         });
     }
 
-    function triggerAssassinAmbush(unit) {
-        let rangedEnemies = enemies.filter(e => e.currentHp > 0 && (e.type === "원딜" || e.isRanged));
-        let targetEnemy = rangedEnemies.length > 0 ? rangedEnemies[0] : getClosestTarget(unit, enemies);
-
-        if (targetEnemy) {
-            unit.currentX = targetEnemy.currentX + 30;
-            unit.currentY = targetEnemy.currentY;
-            unit.el.style.left = unit.currentX + 'px';
-            unit.el.style.top = unit.currentY + 'px';
-
-            showDamageText(unit.currentX, unit.currentY, "🗡️ 기습!", true);
-            triggerAttack(unit.el, false);
-
-            let dmg = unit.damage * 3.0;
-            applyDamageToTarget(targetEnemy, dmg, unit);
-            triggerHit(targetEnemy.el);
-            showDamageText(targetEnemy.currentX, targetEnemy.currentY, `💥 -${Math.round(dmg)}`, true);
-        }
-    }
-
-    function applyDamageToTarget(target, rawDamage, attacker = null) {
-        let netDmg = Math.max(1, rawDamage - (target.def || 0));
-
-        if (target.shield && target.shield > 0) {
-            if (target.shield >= netDmg) {
-                target.shield -= netDmg;
-                netDmg = 0;
-            } else {
-                netDmg -= target.shield;
-                target.shield = 0;
-            }
+    /* --- 히든 합성 시스템 --- */
+    function checkHiddenSynthesis() {
+        if (isFighting) {
+            logMsg("⚠️ 전투 중에는 합성을 할 수 없습니다.");
+            return;
         }
 
-        if (netDmg > 0) {
-            target.currentHp -= netDmg;
+        // 1. 용맹기사 + 대마법사 = LR 마검사
+        let knightIdx = bench.findIndex(u => u.name === "용맹기사");
+        let mageIdx = bench.findIndex(u => u.name === "대마법사");
+        if (knightIdx !== -1 && mageIdx !== -1) {
+            bench.splice(Math.max(knightIdx, mageIdx), 1);
+            bench.splice(Math.min(knightIdx, mageIdx), 1);
+            bench.push({ id: Date.now(), name: "마검사", tier: "LR", star: 1 });
+            logMsg("✨ 히든 합성 성공! [LR 마검사]를 획득했습니다!");
+            renderBench();
+            return;
         }
 
-        if (target.name === "성기사" && isFighting) {
-            triggerPaladinShieldOnHit(target);
+        // 2. 성기사 + 성직사 + 전사 = SSR 구원자
+        let paladinIdx = bench.findIndex(u => u.name === "성기사");
+        let priestIdx = bench.findIndex(u => u.name === "성직사");
+        let warriorIdx = bench.findIndex(u => u.name === "전사");
+        if (paladinIdx !== -1 && priestIdx !== -1 && warriorIdx !== -1) {
+            let indices = [paladinIdx, priestIdx, warriorIdx].sort((a,b) => b-a);
+            indices.forEach(i => bench.splice(i, 1));
+            bench.push({ id: Date.now(), name: "구원자", tier: "SSR", star: 1 });
+            logMsg("✨ 히든 합성 성공! [SSR 구원자]를 획득했습니다!");
+            renderBench();
+            return;
         }
 
-        if (attacker) {
-            attacker.totalDamageDealt = (attacker.totalDamageDealt || 0) + rawDamage;
+        // 3. 저격수 + 대마법사 = LR 마탄수
+        let sniperIdx = bench.findIndex(u => u.name === "저격수");
+        let arcMageIdx = bench.findIndex(u => u.name === "대마법사");
+        if (sniperIdx !== -1 && arcMageIdx !== -1) {
+            bench.splice(Math.max(sniperIdx, arcMageIdx), 1);
+            bench.splice(Math.min(sniperIdx, arcMageIdx), 1);
+            bench.push({ id: Date.now(), name: "마탄수", tier: "LR", star: 1 });
+            logMsg("✨ 히든 합성 성공! [LR 마탄수]를 획득했습니다!");
+            renderBench();
+            return;
         }
 
-        if (target.currentHp <= 0) {
-            target.currentHp = 0;
-            if (target.el) target.el.remove();
-        } else {
-            updateHpAndShieldBar(target);
-        }
+        logMsg("⚠️ 합성 가능한 히든 조합 조합 재료가 벤치에 없습니다.");
     }
 
     function getUpgradeCost(type) {
@@ -1224,7 +894,7 @@
     function sellUnit(idx) {
         if (isFighting) return;
         let unit = bench.splice(idx, 1)[0];
-        let refund = (unit.tier === 'SSR' ? 15 : (unit.tier === 'SR' ? 8 : 4)) * unit.star;
+        let refund = (unit.tier === 'LR' ? 30 : (unit.tier === 'SSR' ? 15 : (unit.tier === 'SR' ? 8 : 4))) * unit.star;
         gold += refund;
         renderBench();
         updateUI();
@@ -1296,10 +966,11 @@
             name: unit.name, tier: unit.tier, star: unit.star, role: stats.role,
             damage: stats.damage, def: stats.def, maxHp: stats.maxHp, currentHp: stats.maxHp, shield: 0,
             range: stats.range, speed: stats.speed, skill: stats.skill,
-            isRanged: stats.role.includes("원딜"), isSummon: false,
+            isRanged: stats.role.includes("원딜") || stats.role === "힐러", isSummon: false,
             originX: posX, originY: posY, currentX: posX, currentY: posY,
             target: null, totalDamageDealt: 0, skillCooldown: 0,
-            isStealth: false, stealthCd: 0, hitSkillCd: 0, valorBuffActive: false
+            isStealth: false, stealthCd: 0, hitSkillCd: 0, valorBuffActive: false,
+            isExecSkill: false
         };
 
         div.ondblclick = (e) => { 
@@ -1331,35 +1002,19 @@
     function updateCooldownUI(u) {
         if (!u.cdFill || !u.cdText) return;
 
-        if (u.name === "성기사") {
-            u.cdFill.style.width = "100%";
-            u.cdText.innerText = "ALWAYS READY";
-            u.cdText.style.color = "#00ffcc";
-            return;
-        }
+        let maxCd = SKILL_MAX_CD;
+        if (u.name === "의사") maxCd = DOCTOR_SKILL_CD;
+        else if (u.name === "성직사") maxCd = PRIEST_SKILL_CD;
+        else if (u.name === "의료 조종 드론사") maxCd = DRONE_SKILL_CD;
 
-        if (u.name === "도적" || u.name === "어쌔신") {
-            let pct = Math.min(100, Math.max(0, (1 - (u.stealthCd / STEALTH_CD_TICKS))) * 100);
-            u.cdFill.style.width = pct + "%";
-            if (u.stealthCd <= 0) {
-                u.cdText.innerText = "STEALTH READY";
-                u.cdText.style.color = "#00ffcc";
-            } else {
-                let remainSec = (u.stealthCd * 0.3).toFixed(1);
-                u.cdText.innerText = `${remainSec}s`;
-                u.cdText.style.color = "#ff9800";
-            }
-            return;
-        }
-
-        let pct = Math.min(100, (u.skillCooldown / SKILL_MAX_CD) * 100);
+        let pct = Math.min(100, (u.skillCooldown / maxCd) * 100);
         u.cdFill.style.width = pct + "%";
 
-        if (u.skillCooldown >= SKILL_MAX_CD) {
+        if (u.skillCooldown >= maxCd) {
             u.cdText.innerText = "SKILL READY";
             u.cdText.style.color = "#00ffcc";
         } else {
-            let remainSec = ((SKILL_MAX_CD - u.skillCooldown) * 0.3).toFixed(1);
+            let remainSec = ((maxCd - u.skillCooldown) * 0.3).toFixed(1);
             u.cdText.innerText = `${remainSec}s`;
             u.cdText.style.color = "#00d2ff";
         }
@@ -1490,24 +1145,37 @@
         let validTargets = targets.filter(t => t.currentHp > 0 && !t.isStealth);
         if (validTargets.length === 0) return null;
 
-        let searchTargets = validTargets;
+        let closest = null, minDist = Infinity;
+        validTargets.forEach(t => {
+            let dist = Math.hypot(t.currentX - attacker.currentX, t.currentY - attacker.currentY);
+            if (dist < minDist) { minDist = dist; closest = t; }
+        });
+        return closest;
+    }
 
-        if (attacker.role === "근딜") {
-            let rangedEnemies = validTargets.filter(t => t.type === "원딜" || t.isRanged);
-            if (rangedEnemies.length > 0) {
-                searchTargets = rangedEnemies;
+    function applyDamageToTarget(target, rawDamage, attacker = null) {
+        let netDmg = Math.max(1, rawDamage - (target.def || 0));
+
+        if (target.shield && target.shield > 0) {
+            if (target.shield >= netDmg) {
+                target.shield -= netDmg;
+                netDmg = 0;
+            } else {
+                netDmg -= target.shield;
+                target.shield = 0;
             }
         }
 
-        let closest = null, minDist = Infinity;
-        searchTargets.forEach(t => {
-            let dist = Math.hypot(t.currentX - attacker.currentX, t.currentY - attacker.currentY);
-            if (dist < minDist) { 
-                minDist = dist; 
-                closest = t; 
-            }
-        });
-        return closest;
+        if (netDmg > 0) target.currentHp -= netDmg;
+
+        if (attacker) attacker.totalDamageDealt = (attacker.totalDamageDealt || 0) + rawDamage;
+
+        if (target.currentHp <= 0) {
+            target.currentHp = 0;
+            if (target.el) target.el.remove();
+        } else {
+            updateHpAndShieldBar(target);
+        }
     }
 
     function startBattle() {
@@ -1518,10 +1186,7 @@
         }
 
         removeRangeCircle();
-
-        if (enemies.length === 0) {
-            spawnEnemies();
-        }
+        if (enemies.length === 0) spawnEnemies();
 
         isFighting = true;
         battleTimeLeft = 120;
@@ -1532,23 +1197,10 @@
         document.querySelectorAll('.field-unit button').forEach(b => b.style.display = 'none');
 
         deployedUnits.forEach(u => {
-            u.totalDamageDealt = 0; 
-            u.target = null;
-            u.isStealth = false;
-            u.stealthCd = 0;
-            u.shield = 0;
-            u.skillCooldown = 0;
-            u.hitSkillCd = 0;
-            u.valorBuffActive = false;
-            updateCooldownUI(u);
+            u.totalDamageDealt = 0; u.target = null; u.skillCooldown = 0;
             let stats = getUnitStats(u.name, u.tier, u.star);
             u.damage = stats.damage; u.maxHp = stats.maxHp; u.def = stats.def; u.currentHp = stats.maxHp; u.speed = stats.speed;
             updateHpAndShieldBar(u);
-
-            if (u.name === "드루이드") triggerDruidSummon(u);
-            if (u.name === "돌격병") triggerChargerDash(u);
-            if (u.name === "어쌔신") triggerAssassinAmbush(u);
-            if (u.name === "용맹기사") triggerValorKnightVictory(u);
         });
 
         timerInterval = setInterval(() => {
@@ -1557,7 +1209,6 @@
             if (battleTimeLeft <= 0) {
                 clearInterval(battleInterval);
                 clearInterval(timerInterval);
-                logMsg(`⏱️ 시간 초과! 제한 시간 2분이 경과했습니다.`);
                 finishBattle(false);
             }
         }, 1000);
@@ -1566,49 +1217,19 @@
             let activeEnemies = enemies.filter(e => e.currentHp > 0);
             let activeUnits = deployedUnits.filter(u => u.currentHp > 0);
 
-            if (activeUnits.length === 0) {
-                clearInterval(battleInterval);
-                clearInterval(timerInterval);
-                finishBattle(false);
-                return;
-            }
-
-            if (activeEnemies.length === 0) {
-                clearInterval(battleInterval);
-                clearInterval(timerInterval);
-                finishBattle(true);
-                return;
-            }
+            if (activeUnits.length === 0) { clearInterval(battleInterval); clearInterval(timerInterval); finishBattle(false); return; }
+            if (activeEnemies.length === 0) { clearInterval(battleInterval); clearInterval(timerInterval); finishBattle(true); return; }
 
             activeUnits.forEach(u => {
-                if (u.stealthCd > 0) {
-                    u.stealthCd--;
-                }
-
-                if (u.skillCooldown >= SKILL_MAX_CD) {
-                    if (u.name === "전사") {
-                        u.skillCooldown = 0;
-                        updateCooldownUI(u);
-                        triggerWarriorTaunt(u);
-                        return;
-                    }
-                }
-
                 u.skillCooldown = Math.min(SKILL_MAX_CD, (u.skillCooldown || 0) + 1);
                 updateCooldownUI(u);
 
-                if (!u.target || u.target.currentHp <= 0) {
-                    u.target = getClosestTarget(u, activeEnemies);
-                }
-
+                if (!u.target || u.target.currentHp <= 0) u.target = getClosestTarget(u, activeEnemies);
                 let targetEnemy = u.target;
                 if (!targetEnemy) return;
 
-                let targetX = (u.role === "근딜" || u.role === "탱커") ? targetEnemy.currentX - 20 : targetEnemy.currentX;
-                let targetY = targetEnemy.currentY;
-
-                let diffX = targetX - u.currentX;
-                let diffY = targetY - u.currentY;
+                let diffX = targetEnemy.currentX - u.currentX;
+                let diffY = targetEnemy.currentY - u.currentY;
                 let dist = Math.hypot(diffX, diffY);
 
                 if (dist > u.range) {
@@ -1624,83 +1245,30 @@
                         u.skillCooldown = 0;
                         updateCooldownUI(u);
 
-                        if (u.name === "마법사") {
-                            showDamageText(u.currentX, u.currentY, "✨ 에너지 볼!", true);
-                            launchEnergyBall(u, targetEnemy, () => {
-                                let dmg = u.damage * 2.5;
-                                applyDamageToTarget(targetEnemy, dmg, u);
-                                triggerHit(targetEnemy.el);
-                                showDamageText(targetEnemy.currentX, targetEnemy.currentY, `💥 -${Math.round(dmg)}`, true);
-                            });
-                            return;
-                        } 
-                        else if (u.name === "궁수") {
-                            triggerArcherRapidFire(u, targetEnemy);
-                            return;
-                        }
-                        else if (u.name === "저격수") {
-                            triggerSniperHeadshot(u, targetEnemy);
-                            return;
-                        }
-                        else if (u.name === "수류탄병") {
-                            triggerGrenadeExplosion(u, targetEnemy);
-                            return;
-                        }
-                        else if (u.name === "레이저병") {
-                            triggerLaserBeam(u, targetEnemy);
-                            return;
-                        }
-                        else if (u.name === "특수부대") {
-                            triggerSpecOpsTactics(u, targetEnemy);
-                            return;
-                        }
-                        else if (u.name === "드루이드") {
-                            triggerDruidVineWhip(u);
-                            return;
-                        }
-                        else if (u.name === "대마법사") {
-                            showDamageText(u.currentX, u.currentY, "🌀 토네이도!", true);
-                            launchTornado(u, activeEnemies);
-                            return;
-                        }
-                        else if (u.name === "용맹기사") {
-                            triggerValorKnightSemicircle(u);
-                            return;
-                        }
+                        if (u.name === "마검사") { triggerIceSpear(u, targetEnemy); return; }
+                        else if (u.name === "구원자") { triggerJudgement(u, targetEnemy); return; }
+                        else if (u.name === "마탄수") { triggerBroadMagicLaser(u, targetEnemy); return; }
                     }
 
                     triggerAttack(u.el, true);
-
-                    let applyDmg = () => {
-                        if (u.name === "수류탄병") {
-                            applyGrenadeBasicAreaDamage(u, targetEnemy);
-                        } else {
-                            applyDamageToTarget(targetEnemy, u.damage, u);
-                            triggerHit(targetEnemy.el);
-                            showDamageText(targetEnemy.currentX, targetEnemy.currentY, `-${Math.round(u.damage)}`);
-                        }
-                    };
-
-                    if (u.isRanged) launchProjectile(u, targetEnemy, applyDmg, false, u.name === '수류탄병' ? 'grenade' : 'default');
-                    else applyDmg();
+                    if (u.name === "마탄수") {
+                        triggerMagicShooterPiercingBasic(u, targetEnemy);
+                    } else {
+                        applyDamageToTarget(targetEnemy, u.damage, u);
+                        triggerHit(targetEnemy.el);
+                        showDamageText(targetEnemy.currentX, targetEnemy.currentY, `-${Math.round(u.damage)}`);
+                    }
                 }
             });
 
             activeEnemies.forEach(e => {
                 let liveUnits = deployedUnits.filter(u => u.currentHp > 0);
-
-                if (!e.target || e.target.currentHp <= 0 || e.target.isStealth) {
-                    e.target = getClosestTarget(e, liveUnits);
-                }
-
+                if (!e.target || e.target.currentHp <= 0) e.target = getClosestTarget(e, liveUnits);
                 let targetAlly = e.target;
                 if (!targetAlly) return;
 
-                let targetX = (e.type === "근딜") ? targetAlly.currentX + 20 : targetAlly.currentX;
-                let targetY = targetAlly.currentY;
-
-                let diffX = targetX - e.currentX;
-                let diffY = targetY - e.currentY;
+                let diffX = targetAlly.currentX - e.currentX;
+                let diffY = targetAlly.currentY - e.currentY;
                 let dist = Math.hypot(diffX, diffY);
 
                 if (dist > e.range) {
@@ -1711,38 +1279,10 @@
                     e.el.style.top = e.currentY + "px";
                 } else {
                     e.el.classList.remove('walking');
-
-                    if (e.isBoss) {
-                        e.skillCooldown = (e.skillCooldown || 0) + 1;
-                        if (e.skillCooldown >= 10) {
-                            e.skillCooldown = 0;
-                            if (e.type === "근딜") {
-                                triggerBossSpinSlash(e);
-                                return;
-                            } else {
-                                triggerBossPiercingArrow(e);
-                                return;
-                            }
-                        }
-                    }
-
                     triggerAttack(e.el, false);
-
-                    let applyDmg = () => {
-                        applyDamageToTarget(targetAlly, e.damage);
-                        triggerHit(targetAlly.el);
-                        showDamageText(targetAlly.currentX, targetAlly.currentY, `-${Math.round(e.damage)}`);
-
-                        if (targetAlly.name === "도적" || targetAlly.name === "어쌔신") {
-                            triggerStealth(targetAlly);
-                        }
-                    };
-
-                    if (e.isRanged) {
-                        launchProjectile(e, targetAlly, applyDmg, true);
-                    } else {
-                        applyDmg();
-                    }
+                    applyDamageToTarget(targetAlly, e.damage);
+                    triggerHit(targetAlly.el);
+                    showDamageText(targetAlly.currentX, targetAlly.currentY, `-${Math.round(e.damage)}`);
                 }
             });
 
@@ -1775,29 +1315,14 @@
         document.getElementById('spin-btn').disabled = false;
         document.querySelectorAll('.field-unit button').forEach(b => b.style.display = 'inline-block');
 
-        deployedUnits = deployedUnits.filter(u => {
-            if (u.isSummon || u.currentHp <= 0) {
-                if (u.el) u.el.remove();
-                return false;
-            }
-            return true;
-        });
-
         deployedUnits.forEach(u => {
-            u.el.classList.remove('walking', 'stealth-mode');
-            u.isStealth = false;
-            u.stealthCd = 0;
-            u.shield = 0;
-            u.hitSkillCd = 0;
-            u.valorBuffActive = false;
+            u.el.classList.remove('walking');
             u.currentX = u.originX; u.currentY = u.originY;
             u.el.style.left = u.originX + "px"; u.el.style.top = u.originY + "px";
-            u.target = null;
-            u.currentHp = u.maxHp; 
+            u.target = null; u.currentHp = u.maxHp; 
             updateHpAndShieldBar(u);
             u.skillCooldown = 0;
             updateCooldownUI(u);
-            u.el.style.opacity = '1';
         });
 
         renderDamageGraph();
@@ -1814,9 +1339,6 @@
             lives--;
             gold += 150;
             logMsg(`💀 전투 패배! 목숨 1개 차감 (남은 목숨: ${lives}) | 패배 위로금 +150G 획득`);
-            if (lives <= 0) {
-                logMsg(`🚨 목숨을 모두 소진하여 게임 오버입니다!`);
-            }
         }
         
         battleTimeLeft = 120;
